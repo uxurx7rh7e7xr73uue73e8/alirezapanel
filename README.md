@@ -1,12 +1,5 @@
-سلام خدمت کاربران عزیز پنل از طرف اقایx4g من از همینجا از این یوتیوبر عزیز بابت گزاشتن ویدیو تشکر میکنم و سپاس فراوان دارم
-دوستان اقای x4gبه دلیل نداشتن تایم نمیتوانه به سوالات شما جواب گو باشه و اگر سوالاتی دارید که درباره پنل و کل گیت هاب من هست 
-میتونید به ایم ایدی تلگرام پیام بدید : @Alirezarorbodnsandconfig_bot
-و دوستانی که میخواهند از پرژه های بعدی ما و اپدیت های ما خبر دار شوند در این کانل عضو شوید : t.me/alirezacoder123
-و برای گپ زدن با دوستان وارد این کانال شوید : https://t.me/+Ck_R55on1yo0YmE8 نکته در گوگل باز کنید 
-و ممنون میشم با استار هاتون از من حمایت کنید
-ما یک سایت هم داریم که لینکش توی ریپازی توری هست
-کانال یوتیوب ما جهت توضیحات تخصصی : https://www.youtube.com/@Alirezacoder12
-نکته دوستان اگر در ویدیو اقای x4g نصب دستی رو انجام دادن نترسید من یک تصب سریع گزاشتم با اون اسکریپت راحت میتونید مثل پنل های حرفه ای نصب کنید 
+سلام خدمت کاربران اقای پمپ نت خیلی خوشهالم که پنل مارو قسمت پروژه هاشون گزاشتن ممنونم از اقای پمپ نت زیر همین متن براتون اسکریپ گزاشتم که راحت نصب کنید پنل مجموعه پمپ نت و پروژه علیرضا پنل 
+پنل علیرضا : 
 
 
 ::: {align="center"}
@@ -839,3 +832,183 @@ GPL-3.0-or-later
 
 ⭐ **Star**    🍴 **Fork**    🐛 **Issues**    🚀 **Contribute**
 :::
+
+
+اسکریپ نصب پنل اقای پمپ نت : 
+
+
+پمپ نت⛽:
+#!/bin/bash
+
+# =================================================================
+#  PompNet Mohammad Master Panel (Auto Install - No License Key Required)
+#  GitHub: https://github.com/PompNet/PompNet-Mohammad-Panel
+# =================================================================
+
+# Colors
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+PURPLE='\033[0;35m'
+CYAN='\033[0;36m'
+NC='\033[0m'
+
+# Check Root Access & Auto-Escalate
+if [ "$EUID" -ne 0 ]; then
+    echo -e "${YELLOW}[!] شما با کاربر غیر root وارد شده‌اید. در حال درخواست دسترسی root...${NC}"
+    if command -v sudo >/dev/null 2>&1; then
+        exec sudo bash "$0" "$@"
+        exit 0
+    else
+        echo -e "${RED}[X] خطا: دستور sudo یافت نشد. لطفاً ابتدا با دستور 'su -' به root سوئیچ کنید.${NC}"
+        exit 1
+    fi
+fi
+
+clear
+echo -e "${PURPLE}"
+echo "=========================================================="
+echo "      PompNet Mohammad Master Panel (Direct Auto Install) "
+echo "=========================================================="
+echo -e "${NC}"
+
+echo -e "${GREEN}[✔] لایسنس سیستم به صورت اتوماتیک فعال گردید (VIP Auto License).${NC}"
+echo -e "${CYAN}[*] در حال شروع فرایند نصب مستقیم...${NC}\n"
+
+# System Architecture Detection
+ARCH=$(uname -m)
+case $ARCH in
+    x86_64 | x64 | amd64) ARCH="amd64" ;;
+    aarch64 | arm64) ARCH="arm64" ;;
+    s390x) ARCH="s390x" ;;
+    i386 | i686) ARCH="386" ;;
+    armv7l | armv6l) ARCH="armv7" ;;
+    *) echo -e "${RED}[X] معماری پردازنده پشتیبانی نمی‌شود: $ARCH${NC}"; exit 1 ;;
+esac
+
+# Install Dependencies
+echo -e "${YELLOW}[*] در حال بروزرسانی سیستم و نصب پیش‌نیازها...${NC}"
+if command -v apt >/dev/null 2>&1; then
+    apt update -y && apt install -y curl wget tar unzip sqlite3 fail2ban ca-certificates net-tools
+elif command -v yum >/dev/null 2>&1; then
+    yum update -y && yum install -y curl wget tar unzip sqlite3 fail2ban ca-certificates net-tools
+elif command -v dnf >/dev/null 2>&1; then
+    dnf update -y && dnf install -y curl wget tar unzip sqlite3 fail2ban ca-certificates net-tools
+fi
+
+# Fetch Engine Core
+echo -e "${YELLOW}[*] در حال دانلود و پیکربندی هسته پمپ نت محمد...${NC}"
+TAG=$(curl -s "https://api.github.com/repos/MHSanaei/3x-ui/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+if [ -z "$TAG" ]; then TAG="v2.4.8"; fi
+
+DOWNLOAD_URL="https://github.com/MHSanaei/3x-ui/releases/download/${TAG}/x-ui-linux-${ARCH}.tar.gz"
+
+systemctl stop x-ui >/dev/null 2>&1
+rm -rf /usr/local/x-ui
+rm -f /tmp/x-ui-linux.tar.gz
+
+wget -N --no-check-certificate -O /tmp/x-ui-linux.tar.gz "$DOWNLOAD_URL"
+tar zxf /tmp/x-ui-linux.tar.gz -C /usr/local/
+rm -f /tmp/x-ui-linux.tar.gz
+
+# CLI Management Commands Setup
+cd /usr/local/x-ui
+chmod +x x-ui bin/xray-linux-${ARCH} 2>/dev/null || true
+
+cat << 'EOF' > /usr/bin/x-ui
+#!/bin/bash
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+PURPLE='\033[0;35m'
+NC='\033[0m'
+
+echo -e "${PURPLE}======================================================${NC}"
+echo -e "${GREEN}      مدیریت پنل پمپ نت محمد (PompNet Mohammad)        ${NC}"
+echo -e "${PURPLE}======================================================${NC}"
+echo -e "1. استارت سرویس پنل"
+echo -e "2. ریستارت سرویس پنل"
+echo -e "3. استاپ سرویس پنل"
+echo -e "4. مشاهده وضعیت سرویس"
+echo -e "5. تغییر نام کاربری و رمز عبور"
+echo -e "6. تغییر پورت وب پنل"
+echo -e "7. خروج"
+echo -e "${PURPLE}------------------------------------------------------${NC}"
+read -p "لطفا یک گزینه را انتخاب کنید [1-7]: " num
+
+case "$num" in
+    1) systemctl start x-ui && echo -e "${GREEN}سرویس روشن شد.${NC}" ;;
+    2) systemctl restart x-ui && echo -e "${GREEN}سرویس ریستارت شد.${NC}" ;;
+    3) systemctl stop x-ui && echo -e "${YELLOW}سرویس خاموش شد.${NC}" ;;
+    4) systemctl status x-ui ;;
+    5)
+        read -p "نام کاربری جدید: " u
+        read -p "رمز عبور جدید: " p
+
+/usr/local/x-ui/x-ui setting -username "$u" -password "$p"
+        systemctl restart x-ui
+        echo -e "${GREEN}اطلاعات جدید ذخیره شد.${NC}"
+        ;;
+    6)
+        read -p "پورت جدید: " pt
+        /usr/local/x-ui/x-ui setting -port "$pt"
+        systemctl restart x-ui
+        echo -e "${GREEN}پورت تغییر یافت.${NC}"
+        ;;
+    7) exit 0 ;;
+    *) echo -e "${RED}گزینه نامعتبر است.${NC}" ;;
+esac
+EOF
+chmod +x /usr/bin/x-ui
+
+# Setup Systemd Service
+cat <<EOF > /etc/systemd/system/x-ui.service
+[Unit]
+Description=PompNet Mohammad Master Panel Service
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/usr/local/x-ui
+ExecStart=/usr/local/x-ui/x-ui
+Restart=on-failure
+RestartSec=3s
+LimitNOFILE=infinity
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+mkdir -p /etc/x-ui/
+
+# Firewall Setup
+if command -v ufw >/dev/null 2>&1; then
+    ufw allow 2053/tcp
+    ufw allow 80/tcp
+    ufw allow 443/tcp
+elif command -v firewalld >/dev/null 2>&1; then
+    firewall-cmd --zone=public --add-port=2053/tcp --permanent
+    firewall-cmd --zone=public --add-port=80/tcp --permanent
+    firewall-cmd --zone=public --add-port=443/tcp --permanent
+    firewall-cmd --reload
+fi
+
+# Enable and Start
+systemctl daemon-reload
+systemctl enable x-ui
+systemctl restart x-ui
+
+SERVER_IP=$(curl -s https://api.ipify.org || hostname -I | awk '{print $1}')
+
+echo -e "\n${GREEN}=========================================================="
+echo "    پنل پمپ نت محمد با موفقیت و بدون نیاز به کلید نصب شد!   "
+echo -e "==========================================================${NC}\n"
+echo -e "${CYAN}🌐 آدرس ورودی پنل:${NC} http://${SERVER_IP}:2053"
+echo -e "${CYAN}👤 نام کاربری پیش‌فرض:${NC} admin"
+echo -e "${CYAN}🔑 رمز عبور پیش‌فرض:${NC} admin"
+echo -e "\n${PURPLE}PompNet Mohammad Panel | Direct Access${NC}\n"
+
+MR:mohammad Pomp Net 
+
+کد نویسی شده توسط تیم اقای پمپ نت و مجموعه اقای علیرضا
